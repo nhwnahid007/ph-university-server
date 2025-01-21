@@ -13,7 +13,7 @@ app.get(
   '/',
 
   (req: Request, res: Response) => {
-    let b
+
     const a = 10
     res.send(a)
   },
