@@ -19,6 +19,37 @@ const createStudent = async (req: Request, res: Response) => {
   }
 };
 
+const getAllStudents = async (req: Request, res: Response) => {
+  try {
+    const result = await studentService.getAllStudentsFromDB();
+  res.status(200).json({
+      success: true,
+      message: 'Students are fetched successfully',
+      data: result,
+    });
+  } catch (error) {
+    //eslint-disable-next-line no-console
+    console.log(error);
+  }
+};
+
+const getSingleStudent = async (req: Request, res: Response) => {
+  try {
+    const { studentId } = req.params;  
+    const result = await studentService.getSingleStudentFromDB(studentId);
+    res.status(200).json({
+      success: true,
+      message: 'Student is fetched successfully',
+      data: result,
+    });
+  } catch (error) {
+    //eslint-disable-next-line no-console
+    console.log(error);
+  }
+};
+
 export const studentController = {
   createStudent,
+  getAllStudents,
+  getSingleStudent,
 };
