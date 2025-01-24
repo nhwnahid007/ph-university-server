@@ -8,9 +8,28 @@ import {
 
 const userNameSchema = new Schema<UserName>({
   // userNameSchema is a sub-schema for the Student model
-  firstName: { type: String, required: [true, 'First Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
+  firstName: {
+    type: String,
+    required: [true, 'First Name is required'], // required is used to make the field mandatory and the second argument is the error message
+    minLength: [3, 'First Name must be at least 3 characters'],
+    maxLength: [20, 'First Name must be at most 20 characters'], // maxLength is used to restrict the length of the field
+    trim: true, // trim is used to remove the leading and trailing whitespace from the field
+    validate: {
+      validator: function (value: string) {
+        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1); // firstNameStr is the first letter of the first name in capital letter and the rest of the first name in lowercase  
+        return firstNameStr === value; // if the first letter of the first name is not in capital letter, then the value is not valid
+      },
+      message: 'First Name must be start with capital letter', // message is the error message
+    },
+  }, // validate is used to validate the value of the field
   middleName: { type: String }, // optional field
-  lastName: { type: String, required: [true, 'Last Name is required'] },
+  lastName: {
+    type: String,
+    required: [true, 'Last Name is required'],
+    minLength: [3, 'Last Name must be at least 3 characters'],
+    maxLength: [20, 'Last Name must be at most 20 characters'], // maxLength is used to restrict the length of the field
+    trim: true, // trim is used to remove the leading and trailing whitespace from the field
+  },
 });
 
 const guardianSchema = new Schema<Guardian>({

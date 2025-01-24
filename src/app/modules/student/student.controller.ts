@@ -14,15 +14,18 @@ const createStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    //eslint-disable-next-line no-console
-    console.log(error);
+    res.status(500).json({
+      success: false, // success is a boolean value that indicates whether the request was successful or not
+      message: 'Something went wrong',
+      error: error, // error is the error object
+    });
   }
 };
 
 const getAllStudents = async (req: Request, res: Response) => {
   try {
     const result = await studentService.getAllStudentsFromDB();
-    res.status(200).json({
+  res.status(200).json({
       success: true,
       message: 'Students are fetched successfully',
       data: result,
@@ -35,7 +38,7 @@ const getAllStudents = async (req: Request, res: Response) => {
 
 const getSingleStudent = async (req: Request, res: Response) => {
   try {
-    const { studentId } = req.params;
+    const { studentId } = req.params;  
     const result = await studentService.getSingleStudentFromDB(studentId);
     res.status(200).json({
       success: true,
