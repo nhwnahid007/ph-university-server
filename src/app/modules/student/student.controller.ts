@@ -2,24 +2,19 @@ import { Request, Response } from 'express';
 import { studentService } from './student.service';
 import studentValidationSchema from './student.validation';
 
-const createStudent = async (req: Request, res: Response) => {
+const createStudent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { student: studentData } = req.body;
     const { error } = studentValidationSchema.validate(studentData);
-    //will call service function to send this data to database
-    const result = await studentService.createStudentToDB(studentData);
-
-    // console.log({error},{value});
-
     if (error) {
-      return res.status(500).json({
+      res.status(400).json({
         success: false,
-        message: 'Student creation failed',
+        message: 'Validation failed',
         error,
       });
+      return;
     }
-
-    //send response
+    const result = await studentService.createStudentToDB(studentData);
     res.status(200).json({
       success: true,
       message: 'Student is created successfully',
@@ -27,39 +22,50 @@ const createStudent = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      success: false, // success is a boolean value that indicates whether the request was successful or not
+      success: false,
       message: 'Something went wrong',
-      error: error, // error is the error object
+      error: error,
     });
   }
 };
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const result = await studentService.getAllStudentsFromDB();
+    const students = await studentService.getAllStudentsFromDB();
     res.status(200).json({
       success: true,
-      message: 'Students are fetched successfully',
-      data: result,
+      data: students,
     });
   } catch (error) {
-    //eslint-disable-next-line no-console
-    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+      error: error,
+    });
   }
 };
 
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { studentId } = req.params;
-    const result = await studentService.getSingleStudentFromDB(studentId);
+    const student = await studentService.getSingleStudentFromDB(studentId);
+    if (!student) {
+      res.status(404).json({
+        success: false,
+        message: 'Student not found',
+      });
+      return;
+    }
     res.status(200).json({
       success: true,
-      message: 'Student is fetched successfully',
-      data: result,
+      data: student,
     });
   } catch (error) {
-    //eslint-disable-next-line no-console
-    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+      error: error,
+    });
   }
 };
 
