@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import validator from 'validator';
 import {
   Guardian,
   LocalGuardian,
@@ -29,6 +30,12 @@ const userNameSchema = new Schema<UserName>({
     minLength: [3, 'Last Name must be at least 3 characters'],
     maxLength: [20, 'Last Name must be at most 20 characters'], // maxLength is used to restrict the length of the field
     trim: true, // trim is used to remove the leading and trailing whitespace from the field
+    validate: {
+      validator: function (value: string) {
+        return validator.isAlpha(value);
+      },
+      message: 'Last Name must contain only alphabets',
+    },
   },
 });
 
@@ -84,7 +91,14 @@ const studentSchema = new Schema<Student>({
     required: [true, 'Gender is required'],
   },
   dateOfBirth: { type: String, required: [true, 'Date of Birth is required'] },
-  email: { type: String, required: [true, 'Email is required'], unique: true },
+  email: { type: String, required: [true, 'Email is required'], unique: true ,
+    validate: {
+      validator: function (value: string) {
+        return validator.isEmail(value);
+      },
+    message: '{VALUE} is not a valid email address, Please enter a valid email address',
+    },
+   },
   contactNo: { type: String, required: [true, 'Contact No is required'] },
   emergencyContactNo: {
     type: String,
