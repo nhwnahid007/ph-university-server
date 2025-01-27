@@ -1,12 +1,24 @@
 import { Request, Response } from 'express';
 import { studentService } from './student.service';
+import studentValidationSchema from './student.validation';
 
 const createStudent = async (req: Request, res: Response) => {
   try {
     const { student: studentData } = req.body;
-
+    const { error } = studentValidationSchema.validate(studentData);
     //will call service function to send this data to database
     const result = await studentService.createStudentToDB(studentData);
+
+    // console.log({error},{value});
+
+    if (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Student creation failed',
+        error,
+      });
+    }
+
     //send response
     res.status(200).json({
       success: true,
@@ -25,7 +37,7 @@ const createStudent = async (req: Request, res: Response) => {
 const getAllStudents = async (req: Request, res: Response) => {
   try {
     const result = await studentService.getAllStudentsFromDB();
-  res.status(200).json({
+    res.status(200).json({
       success: true,
       message: 'Students are fetched successfully',
       data: result,
@@ -38,7 +50,7 @@ const getAllStudents = async (req: Request, res: Response) => {
 
 const getSingleStudent = async (req: Request, res: Response) => {
   try {
-    const { studentId } = req.params;  
+    const { studentId } = req.params;
     const result = await studentService.getSingleStudentFromDB(studentId);
     res.status(200).json({
       success: true,
