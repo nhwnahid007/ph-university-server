@@ -146,5 +146,4 @@ const StudentModel = model<Student>('Student', studentSchema);
 // studentSchema is the schema that defines the structure of the Student collection in the database
 // StudentModel is the model for the Student collection in the database
 
-
 export default StudentModel;
