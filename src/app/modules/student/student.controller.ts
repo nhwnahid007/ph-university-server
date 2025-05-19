@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { studentService } from './student.service';
-import studentSchema from './student.zod.validation';
+import studentValidationSchema from './student.validation';
 // import studentValidationSchema from './student.validation';
 
 const createStudent = async (req: Request, res: Response): Promise<void> => {
   try {
     //data validation using zod
     const { student: studentData } = req.body;
-    const zodParsedData = studentSchema.parse(studentData);
+    const zodParsedData = studentValidationSchema.parse(studentData);
 
     //data validation using joi
     // const { error, value } = studentValidationSchema.validate(studentData);

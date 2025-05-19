@@ -50,7 +50,7 @@ const localGuardianValidationSchema = z.object({
 });
 
 // Define the schema for Student
-const studentSchema = z.object({
+const studentValidationSchema = z.object({
   id: z.string().min(1, { message: 'ID is required' }),
   name: userNameValidationSchema,
   gender: z.enum(['male', 'female'], {
@@ -75,4 +75,4 @@ const studentSchema = z.object({
   isActive: z.enum(['active', 'blocked']).default('active'),
 });
 
-export default studentSchema;
+export default studentValidationSchema;
