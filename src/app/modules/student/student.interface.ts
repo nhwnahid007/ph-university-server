@@ -1,5 +1,9 @@
 // import { Schema, model, connect } from 'mongoose';
 
+// 1. Create an interface representing a document in MongoDB.
+// Interface is use for type
+   
+
 export type Guardian = {
   fatherName: string;
   fatherOccupation: string;

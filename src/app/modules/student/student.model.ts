@@ -142,5 +142,9 @@ const studentSchema = new Schema<Student>({
 // studentSchema is the schema that defines the structure of the Student collection in the database
 
 const StudentModel = model<Student>('Student', studentSchema);
+// here Student is the name of the collection in the database
+// studentSchema is the schema that defines the structure of the Student collection in the database
+// StudentModel is the model for the Student collection in the database
+
 
 export default StudentModel;
