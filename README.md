@@ -41,8 +41,8 @@ tsc --init
 1. Open `tsconfig.json`.
 2. Set the `rootDir` and `outDir`:
    ```json
-   "rootDir": "./src/", // specify the root directory
-   "outDir": "./dist/", // specify the output directory
+   "rootDir": "./src", // specify the root directory
+   "outDir": "./dist", // specify the output directory
    ```
 
 3. Add the following to manage included and excluded files:
@@ -89,9 +89,6 @@ npm install -D eslint@9.14.0
 npm install -D --exact prettier
 ```
 
-## Project Structure
 
-Create the following files:
-- `src/app.ts`
-- `src/server.ts`
+
 
