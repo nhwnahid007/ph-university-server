@@ -1,13 +1,15 @@
 import { Schema, model } from 'mongoose';
 
 import {
-  Guardian,
-  LocalGuardian,
-  Student,
-  UserName,
+  studentMethods,
+  StudentModel,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  TUserName,
 } from './student.interface';
 
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   // userNameSchema is a sub-schema for the Student model
   firstName: {
     type: String,
@@ -39,7 +41,7 @@ const userNameSchema = new Schema<UserName>({
   },
 });
 
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: { type: String, required: [true, 'Father Name is required'] },
   fatherOccupation: {
     type: String,
@@ -61,7 +63,7 @@ const guardianSchema = new Schema<Guardian>({
 });
 
 // localGuardianSchema is a sub-schema for the Student model
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: { type: String, required: [true, 'Local Guardian Name is required'] },
   occupation: {
     type: String,
@@ -78,7 +80,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 });
 
 // studentSchema is the main schema for the Student model
-const studentSchema = new Schema<Student>({
+const studentSchema = new Schema<TStudent,StudentModel,studentMethods>({
   id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
 
   name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
@@ -141,9 +143,15 @@ const studentSchema = new Schema<Student>({
 // 'Student' is the name of the collection in the database
 // studentSchema is the schema that defines the structure of the Student collection in the database
 
-const StudentModel = model<Student>('Student', studentSchema);
+
+
+studentSchema.methods.isUserExist = async function(id:string){
+  const existingUser = await Student.findOne({id})
+  return existingUser
+}
+
+export const Student = model<TStudent,StudentModel>('Student', studentSchema);
 // here Student is the name of the collection in the database
 // studentSchema is the schema that defines the structure of the Student collection in the database
 // StudentModel is the model for the Student collection in the database
 
-export default StudentModel;
