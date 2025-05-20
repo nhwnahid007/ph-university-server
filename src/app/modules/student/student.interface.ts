@@ -2,6 +2,8 @@
 
 import { Model } from "mongoose";
 
+// import { Model } from "mongoose";
+
 // 1. Create an interface representing a document in MongoDB.
 // Interface is use for type
 
@@ -44,12 +46,21 @@ export type TStudent = {
   isActive: 'active' | 'blocked';
 };
 
-export type studentMethods = {
-  isUserExist(id: string): Promise<TStudent | null>;
-};
+//# for creating instance method
+// export type studentMethods = {
+//   isUserExist(id: string): Promise<TStudent | null>;
+// };
 
-export type StudentModel = Model<
-  TStudent,
-  Record<string, never>,
-  studentMethods
->;
+// export type StudentModel = Model<
+//   TStudent,
+//   Record<string, never>,
+//   studentMethods
+// >;
+
+//for creating static method
+
+export interface StudentModel extends Model<TStudent> {
+  isUserExist(id: string): Promise<TStudent | null>;
+}
+
+

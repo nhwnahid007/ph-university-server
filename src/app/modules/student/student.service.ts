@@ -4,13 +4,22 @@ import { Student } from './student.model';
 
 //here we are creating a service to create a student in the database
 const createStudentToDB = async (studentData: TStudent) => {
-  // const result = await Student.create(student); //built in static method
-  const student = new Student(studentData) //create a new instance of the Student model
-  if(await student.isUserExist(studentData.id)){
-    throw new Error('Student already exists')
-  } //check if the student already exists
   
-  const result = await student.save()
+
+  // const student = new Student(studentData) //create a new instance of the Student model
+  // if(await student.isUserExist(studentData.id)){
+  //   throw new Error('Student already exists')
+  // } //check if the student already exists
+  
+  // const result = await student.save()
+
+  const isUserExist = await Student.isUserExist(studentData.id)
+  if(isUserExist){
+    throw new Error('Student already exists')
+  }
+
+  const result = await Student.create(studentData); //built in static method
+  
   return result;
 };
 

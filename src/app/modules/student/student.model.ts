@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 import {
-  studentMethods,
+  
   StudentModel,
   TGuardian,
   TLocalGuardian,
@@ -80,7 +80,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // studentSchema is the main schema for the Student model
-const studentSchema = new Schema<TStudent,StudentModel,studentMethods>({
+const studentSchema = new Schema<TStudent,StudentModel>({
   id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
 
   name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
@@ -144,8 +144,17 @@ const studentSchema = new Schema<TStudent,StudentModel,studentMethods>({
 // studentSchema is the schema that defines the structure of the Student collection in the database
 
 
+//#creating a custom instance method
+// studentSchema.methods.isUserExist = async function(id:string){
+//   const existingUser = await Student.findOne({id})
+//   return existingUser
+// }
 
-studentSchema.methods.isUserExist = async function(id:string){
+
+
+//#creating a custom static method
+
+studentSchema.statics.isUserExist = async function(id:string):Promise<TStudent | null>{
   const existingUser = await Student.findOne({id})
   return existingUser
 }
@@ -154,4 +163,3 @@ export const Student = model<TStudent,StudentModel>('Student', studentSchema);
 // here Student is the name of the collection in the database
 // studentSchema is the schema that defines the structure of the Student collection in the database
 // StudentModel is the model for the Student collection in the database
-
