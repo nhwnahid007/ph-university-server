@@ -8,6 +8,9 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
+  import bcrypt from 'bcrypt';
+import config from '../../config';
+
 
 const userNameSchema = new Schema<TUserName>({
   // userNameSchema is a sub-schema for the Student model
@@ -82,6 +85,9 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 // studentSchema is the main schema for the Student model
 const studentSchema = new Schema<TStudent,StudentModel>({
   id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
+  password: { type: String, required: [true, 'Password is required'],
+    maxlength: [20, 'Password can not be more than 20']
+   },
 
   name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
   gender: {
@@ -134,6 +140,23 @@ const studentSchema = new Schema<TStudent,StudentModel>({
   profileImage: { type: String },
   isActive: { type: String, enum: ['active', 'blocked'], default: 'active' }, //default is used to set a default value for the field
 });
+
+studentSchema.pre('save',async function(next){
+
+  // console.log(this, 'pre hook: we will save the data');
+
+  // hashing pass and save to db
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+ user.password = await bcrypt.hash(user.password,Number(config.bcrypt_salt_rounds))
+ next()
+})
+
+//post middleware
+
+studentSchema.post('save',function(){
+  // console.log(this, 'post hook: we saved our data');
+})
 
 // StudentModel is the model for the Student collection in the database
 // Student is the interface that defines the structure of the Student collection in the database
