@@ -1,6 +1,6 @@
 // import { Schema, model, connect } from 'mongoose';
 
-import { Model } from "mongoose";
+import { Model } from 'mongoose';
 
 // import { Model } from "mongoose";
 
@@ -64,5 +64,3 @@ export type TStudent = {
 export interface StudentModel extends Model<TStudent> {
   isUserExist(id: string): Promise<TStudent | null>;
 }
-
-

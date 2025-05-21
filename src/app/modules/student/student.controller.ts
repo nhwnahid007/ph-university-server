@@ -99,8 +99,6 @@ const deleteStudent = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-
 export const studentController = {
   createStudent,
   getAllStudents,

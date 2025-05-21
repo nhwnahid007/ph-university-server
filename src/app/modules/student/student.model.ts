@@ -1,16 +1,14 @@
 import { Schema, model } from 'mongoose';
 
 import {
-  
   StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
   TUserName,
 } from './student.interface';
-  import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import config from '../../config';
-
 
 const userNameSchema = new Schema<TUserName>({
   // userNameSchema is a sub-schema for the Student model
@@ -83,11 +81,13 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // studentSchema is the main schema for the Student model
-const studentSchema = new Schema<TStudent,StudentModel>({
+const studentSchema = new Schema<TStudent, StudentModel>({
   id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
-  password: { type: String, required: [true, 'Password is required'],
-    maxlength: [20, 'Password can not be more than 20']
-   },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    maxlength: [20, 'Password can not be more than 20'],
+  },
 
   name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
   gender: {
@@ -141,56 +141,62 @@ const studentSchema = new Schema<TStudent,StudentModel>({
   isActive: { type: String, enum: ['active', 'blocked'], default: 'active' }, //default is used to set a default value for the field
   isDeleted: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
-studentSchema.pre('save',async function(next){
-
+studentSchema.pre('save', async function (next) {
   // console.log(this, 'pre hook: we will save the data');
 
   // hashing pass and save to db
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this; //document
- user.password = await bcrypt.hash(user.password,Number(config.bcrypt_salt_rounds))
- next()
-})
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
 
 //post middleware
 
-studentSchema.post('save',function(doc,next){
-  doc.password = ''
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
   // console.log( 'post hook: we saved our data');
-  next()
-})
-
+  next();
+});
 
 //query middleware
 
-studentSchema.pre('find', function(next){
+studentSchema.pre('find', function (next) {
   // console.log(this,'this is current query');
 
-  this.find({isDeleted : {$ne:true}})
-  next()
-})
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
 
-studentSchema.pre('findOne', function(next){
+studentSchema.pre('findOne', function (next) {
   // console.log(this,'this is current query');
 
-  this.find({isDeleted : {$ne:true}})
-  next()
-})
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
 
+studentSchema.pre('aggregate', function (next) {
+  // console.log(this,'this is current query');
 
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+
+  next();
+});
 
 // StudentModel is the model for the Student collection in the database
 // Student is the interface that defines the structure of the Student collection in the database
-// studentSchema is the schema that defines the structure of the Student collection in the database
+// studentSchema is the schema that defines the structure of the Student collection in the databased
 // model is a function that creates a model for the Student collection in the database
 // model<Student> is used to create a model for the Student collection in the database
 // 'Student' is the name of the collection in the database
 // studentSchema is the schema that defines the structure of the Student collection in the database
-
 
 //#creating a custom instance method
 // studentSchema.methods.isUserExist = async function(id:string){
@@ -198,16 +204,16 @@ studentSchema.pre('findOne', function(next){
 //   return existingUser
 // }
 
-
-
 //#creating a custom static method
 
-studentSchema.statics.isUserExist = async function(id:string):Promise<TStudent | null>{
-  const existingUser = await Student.findOne({id})
-  return existingUser
-}
+studentSchema.statics.isUserExist = async function (
+  id: string,
+): Promise<TStudent | null> {
+  const existingUser = await Student.findOne({ id });
+  return existingUser;
+};
 
-export const Student = model<TStudent,StudentModel>('Student', studentSchema);
+export const Student = model<TStudent, StudentModel>('Student', studentSchema);
 // here Student is the name of the collection in the database
 // studentSchema is the schema that defines the structure of the Student collection in the database
 // StudentModel is the model for the Student collection in the database
