@@ -139,6 +139,10 @@ const studentSchema = new Schema<TStudent,StudentModel>({
   }, // localGuardian is a field of type localGuardianSchema and is required
   profileImage: { type: String },
   isActive: { type: String, enum: ['active', 'blocked'], default: 'active' }, //default is used to set a default value for the field
+  isDeleted: {
+    type: Boolean,
+    default: false
+  }
 });
 
 studentSchema.pre('save',async function(next){
@@ -147,16 +151,37 @@ studentSchema.pre('save',async function(next){
 
   // hashing pass and save to db
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
+  const user = this; //document
  user.password = await bcrypt.hash(user.password,Number(config.bcrypt_salt_rounds))
  next()
 })
 
 //post middleware
 
-studentSchema.post('save',function(){
-  // console.log(this, 'post hook: we saved our data');
+studentSchema.post('save',function(doc,next){
+  doc.password = ''
+  // console.log( 'post hook: we saved our data');
+  next()
 })
+
+
+//query middleware
+
+studentSchema.pre('find', function(next){
+  // console.log(this,'this is current query');
+
+  this.find({isDeleted : {$ne:true}})
+  next()
+})
+
+studentSchema.pre('findOne', function(next){
+  // console.log(this,'this is current query');
+
+  this.find({isDeleted : {$ne:true}})
+  next()
+})
+
+
 
 // StudentModel is the model for the Student collection in the database
 // Student is the interface that defines the structure of the Student collection in the database
