@@ -81,78 +81,89 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 // studentSchema is the main schema for the Student model
-const studentSchema = new Schema<TStudent, StudentModel>({
-  id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    maxlength: [20, 'Password can not be more than 20'],
-  },
-
-  name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female'],
-      message: '{VALUE} is not a valid gender',
-    }, // enum is used to restrict the value of the field to a set of predefined values
-    required: [true, 'Gender is required'],
-  },
-  dateOfBirth: { type: String, required: [true, 'Date of Birth is required'] },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    // validate: {
-    //   validator: function (value: string) {
-    //     return validator.isEmail(value);
-    //   },
-    //   message:
-    //     '{VALUE} is not a valid email address, Please enter a valid email address',
-    // },
-  },
-  contactNo: { type: String, required: [true, 'Contact No is required'] },
-  emergencyContactNo: {
-    type: String,
-    required: [true, 'Emergency Contact No is required'],
-  },
-  bloodGroup: {
-    type: String,
-    enum: {
-      values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-      message: '{VALUE} is not a valid blood group',
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      maxlength: [20, 'Password can not be more than 20'],
     },
-    required: [true, 'Blood Group is required'],
-  },
-  presentAddress: {
-    type: String,
-    required: [true, 'Present Address is required'],
-  },
-  permanentAddress: {
-    type: String,
-    required: [true, 'Permanent Address is required'],
-  },
-  guardian: { type: guardianSchema, required: [true, 'Guardian is required'] }, // guardian is a  field of type guardianSchema and is required
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local Guardian is required'],
-  }, // localGuardian is a field of type localGuardianSchema and is required
-  profileImage: { type: String },
-  isActive: { type: String, enum: ['active', 'blocked'], default: 'active' }, //default is used to set a default value for the field
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-},{
-  toJSON: {
-    virtuals: true
-  }
-});
 
-//virtual 
-studentSchema.virtual('fullName').get(function(){
-  return this.name.firstName + ' ' + this.name.middleName+ ' ' + this.name.lastName;
-})
+    name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female'],
+        message: '{VALUE} is not a valid gender',
+      }, // enum is used to restrict the value of the field to a set of predefined values
+      required: [true, 'Gender is required'],
+    },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of Birth is required'],
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      // validate: {
+      //   validator: function (value: string) {
+      //     return validator.isEmail(value);
+      //   },
+      //   message:
+      //     '{VALUE} is not a valid email address, Please enter a valid email address',
+      // },
+    },
+    contactNo: { type: String, required: [true, 'Contact No is required'] },
+    emergencyContactNo: {
+      type: String,
+      required: [true, 'Emergency Contact No is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        message: '{VALUE} is not a valid blood group',
+      },
+      required: [true, 'Blood Group is required'],
+    },
+    presentAddress: {
+      type: String,
+      required: [true, 'Present Address is required'],
+    },
+    permanentAddress: {
+      type: String,
+      required: [true, 'Permanent Address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian is required'],
+    }, // guardian is a  field of type guardianSchema and is required
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local Guardian is required'],
+    }, // localGuardian is a field of type localGuardianSchema and is required
+    profileImage: { type: String },
+    isActive: { type: String, enum: ['active', 'blocked'], default: 'active' }, //default is used to set a default value for the field
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  },
+);
+
+//virtual
+studentSchema.virtual('fullName').get(function () {
+  return (
+    this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
+  );
+});
 
 studentSchema.pre('save', async function (next) {
   // console.log(this, 'pre hook: we will save the data');
@@ -166,8 +177,6 @@ studentSchema.pre('save', async function (next) {
   );
   next();
 });
-
-
 
 //post middleware
 
