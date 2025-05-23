@@ -1,18 +1,17 @@
 import { z } from 'zod';
 
-export const createUserZodSchema = z.object({
-  id: z.string({
-    required_error: 'User ID is required',
-  }),
-  password: z.string({
-    required_error: 'Password is required',
-  }),
-  needsPasswordChange: z.boolean().optional(), // optional because it has a default
-  role: z.enum(['admin', 'student', 'faculty'], {
-    required_error: 'Role is required',
-  }),
-  status: z.enum(['in-progress', 'blocked'], {
-    required_error: 'Status is required',
-  }),
-  isDeleted: z.boolean().optional(), // optional because it has a default
+const userValidationSchema = z.object({
+  password: z
+    .string({
+      required_error: 'Password is required',
+      invalid_type_error: 'Password must be a string',
+    })
+    .max(20, {
+      message: 'Password must be at most 20 characters long',
+    })
+    .optional()
 });
+
+export const UserValidation = {
+  userValidationSchema,
+};

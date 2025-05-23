@@ -89,6 +89,12 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Password is required'],
       maxlength: [20, 'Password can not be more than 20'],
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'User is required'],
+      unique: true,
+    },
 
     name: { type: userNameSchema, required: [true, 'Name is required'] }, // required is used to make the field mandatory and the second argument is the error message
     gender: {
@@ -145,7 +151,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: [true, 'Local Guardian is required'],
     }, // localGuardian is a field of type localGuardianSchema and is required
     profileImage: { type: String },
-    isActive: { type: String, enum: ['active', 'blocked'], default: 'active' }, //default is used to set a default value for the field
     isDeleted: {
       type: Boolean,
       default: false,
