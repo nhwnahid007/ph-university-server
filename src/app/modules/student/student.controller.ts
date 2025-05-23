@@ -1,41 +1,59 @@
 import { NextFunction, Request, Response } from 'express';
 import { studentService } from './student.service';
+import sendResponse from '../../utils/sendResponse';
+import httpStatus from 'http-status';
 
-const getAllStudents = async (req: Request, res: Response, next:NextFunction) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const students = await studentService.getAllStudentsFromDB();
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
+      message: 'Students fetched successfully',
       data: students,
     });
   } catch (error) {
-
-    next(error)
-
+    next(error);
   }
 };
 
-const getSingleStudent = async (req: Request, res: Response,next: NextFunction): Promise<void> => {
+
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { studentId } = req.params;
     const result = await studentService.getSingleStudentFromDB(studentId);
+
     if (!result) {
-      res.status(404).json({
-        success: false,
-        message: 'Student not found',
-      });
-      return;
+      // It's better to create a custom error object for consistent global error handling
+      const error = new Error('Student not found');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (error as any).statusCode = httpStatus.NOT_FOUND;
+      return next(error);
     }
-    res.status(200).json({
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
-      message: 'Student fetched successfully',
+      message: 'Single student fetched successfully',
       data: result,
     });
   } catch (error) {
     next(error);
   }
 };
-const deleteStudent = async (req: Request, res: Response, next:NextFunction): Promise<void> => {
+const deleteStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { studentId } = req.params;
     const result = await studentService.deleteStudentFromDB(studentId);
@@ -46,13 +64,14 @@ const deleteStudent = async (req: Request, res: Response, next:NextFunction): Pr
       });
       return;
     }
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: 'Student deleted successfully',
       data: result,
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
