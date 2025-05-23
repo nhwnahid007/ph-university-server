@@ -7,8 +7,6 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 const userNameSchema = new Schema<TUserName>({
   // userNameSchema is a sub-schema for the Student model
@@ -84,11 +82,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 const studentSchema = new Schema<TStudent, StudentModel>(
   {
     id: { type: String, required: [true, 'ID is required'], unique: true }, // unique is used to make the field unique
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
-      maxlength: [20, 'Password can not be more than 20'],
-    },
+
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -113,13 +107,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Email is required'],
       unique: true,
-      // validate: {
-      //   validator: function (value: string) {
-      //     return validator.isEmail(value);
-      //   },
-      //   message:
-      //     '{VALUE} is not a valid email address, Please enter a valid email address',
-      // },
     },
     contactNo: { type: String, required: [true, 'Contact No is required'] },
     emergencyContactNo: {
@@ -170,27 +157,6 @@ studentSchema.virtual('fullName').get(function () {
   );
 });
 
-studentSchema.pre('save', async function (next) {
-  // console.log(this, 'pre hook: we will save the data');
-
-  // hashing pass and save to db
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; //document
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
-
-//post middleware
-
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-  // console.log( 'post hook: we saved our data');
-  next();
-});
-
 //query middleware
 
 studentSchema.pre('find', function (next) {
@@ -207,27 +173,7 @@ studentSchema.pre('findOne', function (next) {
   next();
 });
 
-studentSchema.pre('aggregate', function (next) {
-  // console.log(this,'this is current query');
-
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
-
-  next();
-});
-
-// StudentModel is the model for the Student collection in the database
-// Student is the interface that defines the structure of the Student collection in the database
-// studentSchema is the schema that defines the structure of the Student collection in the databased
-// model is a function that creates a model for the Student collection in the database
-// model<Student> is used to create a model for the Student collection in the database
-// 'Student' is the name of the collection in the database
-// studentSchema is the schema that defines the structure of the Student collection in the database
-
 //#creating a custom instance method
-// studentSchema.methods.isUserExist = async function(id:string){
-//   const existingUser = await Student.findOne({id})
-//   return existingUser
-// }
 
 //#creating a custom static method
 
