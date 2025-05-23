@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { studentRoutes } from './app/modules/student/student.route';
 import { UserRoutes } from './app/modules/user/user.route';
+import globalErrorHandler from './app/middleware/globalErrorHandler';
 
 const app = express();
 // const port = 3000
@@ -23,5 +24,11 @@ app.get(
     res.send(a);
   },
 );
+
+//global error handler
+
+app.use(globalErrorHandler);
+  
+
 
 export default app;
