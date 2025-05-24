@@ -1,33 +1,29 @@
-import { NextFunction, Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { studentService } from './student.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 
-const getAllStudents = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
+const catchAsync = (fn : RequestHandler)  => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch((error) => next(error));
+  };
+};
+
+  const getAllStudents: RequestHandler = catchAsync(async (req, res, next) => {
+  
     const students = await studentService.getAllStudentsFromDB();
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: 'Students fetched successfully',
       data: students,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  
+});
 
-
-const getSingleStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+const getSingleStudent: RequestHandler = catchAsync(async (req, res, next) => {
+  
     const { studentId } = req.params;
     const result = await studentService.getSingleStudentFromDB(studentId);
 
@@ -45,35 +41,27 @@ const getSingleStudent = async (
       message: 'Single student fetched successfully',
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
-const deleteStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
+  
+});
+const deleteStudent: RequestHandler = catchAsync(async (req, res, next) => {
+  
     const { studentId } = req.params;
     const result = await studentService.deleteStudentFromDB(studentId);
     if (!result) {
-      res.status(404).json({
+      res.status(httpStatus.NOT_FOUND).json({
         success: false,
         message: 'Student not found',
       });
       return;
     }
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: 'Student deleted successfully',
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+    
+}); 
 
 export const studentController = {
   getAllStudents,
