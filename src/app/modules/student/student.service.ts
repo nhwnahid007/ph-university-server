@@ -22,6 +22,9 @@ const getSingleStudentFromDB = async (id: string) => {
 //delete student from db
 const deleteStudentFromDB = async (id: string) => {
   const result = await Student.updateOne({ id }, { isDeleted: true });
+  if (result.modifiedCount === 0) {
+    return false;
+  }
   return result;
 };
 
