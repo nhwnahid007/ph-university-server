@@ -30,7 +30,7 @@ const createStudentIntoDB = async (password: string, studentData: TStudent) => {
   userData.role = 'student';
 
   //manuall generate id
-  userData.id = '20301001';
+  userData.id = '2030' + Math.floor(1000 + Math.random() * 9000).toString();
 
   //create User
   const newUser = await User.create(userData);
