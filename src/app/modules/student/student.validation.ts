@@ -57,31 +57,31 @@ const createStudentValidationSchema = z.object({
       .max(20, { message: 'Password can not be more than 20' }),
     student: z.object({
       name: userNameValidationSchema,
-    gender: z.enum(['male', 'female'], {
-      errorMap: () => ({ message: 'Gender must be either male or female' }),
+      gender: z.enum(['male', 'female'], {
+        errorMap: () => ({ message: 'Gender must be either male or female' }),
+      }),
+      dateOfBirth: z.date({ message: 'Invalid date of birth' }),
+      email: z.string().email({ message: 'Invalid email address' }),
+      contactNo: z.string().min(1, { message: 'Contact No is required' }),
+      emergencyContactNo: z
+        .string()
+        .min(1, { message: 'Emergency Contact No is required' }),
+      bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
+        errorMap: () => ({ message: 'Invalid blood group' }),
+      }),
+      presentAddress: z
+        .string()
+        .min(1, { message: 'Present Address is required' }),
+      permanentAddress: z
+        .string()
+        .min(1, { message: 'Permanent Address is required' }),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+      profileImage: z.string().optional(),
     }),
-    dateOfBirth: z.string().min(1, { message: 'Date of Birth is required' }),
-    email: z.string().email({ message: 'Invalid email address' }),
-    contactNo: z.string().min(1, { message: 'Contact No is required' }),
-    emergencyContactNo: z
-      .string()
-      .min(1, { message: 'Emergency Contact No is required' }),
-    bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
-      errorMap: () => ({ message: 'Invalid blood group' }),
-    }),
-    presentAddress: z
-      .string()
-      .min(1, { message: 'Present Address is required' }),
-    permanentAddress: z
-      .string()
-      .min(1, { message: 'Permanent Address is required' }),
-    guardian: guardianValidationSchema,
-    localGuardian: localGuardianValidationSchema,
-    profileImage: z.string().optional(),
-    })
   }),
 });
 
 export const studentValidations = {
- createStudentValidationSchema,
+  createStudentValidationSchema,
 };
